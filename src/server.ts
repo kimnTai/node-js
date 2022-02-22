@@ -84,5 +84,5 @@ const requestListener = (req: http.IncomingMessage, res: http.ServerResponse) =>
 };
 
 const server = http.createServer(requestListener);
-server.listen(8080);
+server.listen(process.env.PORT || 8080);
 console.log("伺服器啟動中");
