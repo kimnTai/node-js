@@ -2,10 +2,7 @@ import http from "http";
 import headers from "./headers";
 import { v4 as uuidv4 } from "uuid";
 import { errorHandle, successHandle } from "./errorHandle";
-
-type todoItem = { title: string; id: string };
-
-const todoList: todoItem[] = [];
+import todoList from "./data";
 
 const requestListener = (req: http.IncomingMessage, res: http.ServerResponse) => {
   // CORS 跨網域
@@ -21,66 +18,67 @@ const requestListener = (req: http.IncomingMessage, res: http.ServerResponse) =>
   if (req.url == "/todo") {
     switch (req.method) {
       case "GET":
-        successHandle(res, todoList);
+        successHandle(res);
         break;
       case "POST":
         req.on("end", () => {
           try {
             const { title } = JSON.parse(body);
-            if (title !== undefined) {
-              const newTodo = { title: title, id: uuidv4() };
-              todoList.push(newTodo);
-              successHandle(res, todoList);
+            if (title) {
+              todoList.push({ title: title, id: uuidv4() });
+              successHandle(res);
             } else {
-              errorHandle(res);
+              errorHandle(res, 400);
             }
           } catch (error) {
-            errorHandle(res);
+            errorHandle(res, 400);
           }
         });
         break;
       case "DELETE":
         todoList.length = 0;
-        successHandle(res, todoList);
+        successHandle(res);
+        break;
+      default:
+        errorHandle(res, 405);
         break;
     }
     return;
   }
   if (req.url?.startsWith("/todo/")) {
+    const id = req.url.split("/").pop();
+    const index = todoList.findIndex((item) => item.id == id);
     switch (req.method) {
       case "DELETE":
-        const id = req.url.split("/").pop();
-        const index = todoList.findIndex((item) => item.id == id);
         if (index !== -1) {
           todoList.splice(index, 1);
-          successHandle(res, todoList);
+          successHandle(res);
         } else {
-          errorHandle(res);
+          errorHandle(res, 400);
         }
         break;
       case "PATCH":
         req.on("end", () => {
           try {
             const { title } = JSON.parse(body);
-            const id = req.url?.split("/").pop();
-            const index = todoList.findIndex((item) => item.id == id);
-            if (title !== undefined && index != -1) {
+            if (title && index != -1) {
               todoList[index].title = title;
-              successHandle(res, todoList);
+              successHandle(res);
             } else {
-              errorHandle(res);
+              errorHandle(res, 400);
             }
           } catch (error) {
-            errorHandle(res);
+            errorHandle(res, 400);
           }
         });
+        break;
+      default:
+        errorHandle(res, 405);
         break;
     }
     return;
   }
-  res.writeHead(404, headers);
-  res.write(JSON.stringify({ status: "false", message: "無此網站路由" }));
-  res.end();
+  errorHandle(res, 404);
 };
 
 const server = http.createServer(requestListener);
