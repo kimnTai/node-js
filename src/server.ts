@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { errorHandle, successHandle } from "./errorHandle";
 import todoList from "./data";
 
-const requestListener = (req: http.IncomingMessage, res: http.ServerResponse) => {
+const requestListener = async (req: http.IncomingMessage, res: http.ServerResponse) => {
   // CORS 跨網域
   if (req.method == "OPTIONS") {
     res.writeHead(200, headers);
@@ -14,26 +14,25 @@ const requestListener = (req: http.IncomingMessage, res: http.ServerResponse) =>
 
   let body = "";
   req.on("data", (chunk) => (body += chunk));
-
+  await new Promise((resolve) => req.on("end", resolve));
+  
   if (req.url == "/todo") {
     switch (req.method) {
       case "GET":
         successHandle(res);
         break;
       case "POST":
-        req.on("end", () => {
-          try {
-            const { title } = JSON.parse(body);
-            if (title) {
-              todoList.push({ title: title, id: uuidv4() });
-              successHandle(res);
-            } else {
-              errorHandle(res, 400);
-            }
-          } catch (error) {
-            errorHandle(res, 400);
+        try {
+          const { title } = JSON.parse(body);
+          if (title) {
+            todoList.push({ title: title, id: uuidv4() });
+            successHandle(res);
+            return;
           }
-        });
+          errorHandle(res, 400);
+        } catch (error) {
+          errorHandle(res, 400);
+        }
         break;
       case "DELETE":
         todoList.length = 0;
@@ -53,24 +52,22 @@ const requestListener = (req: http.IncomingMessage, res: http.ServerResponse) =>
         if (index !== -1) {
           todoList.splice(index, 1);
           successHandle(res);
-        } else {
-          errorHandle(res, 400);
+          return;
         }
+        errorHandle(res, 400);
         break;
       case "PATCH":
-        req.on("end", () => {
-          try {
-            const { title } = JSON.parse(body);
-            if (title && index != -1) {
-              todoList[index].title = title;
-              successHandle(res);
-            } else {
-              errorHandle(res, 400);
-            }
-          } catch (error) {
-            errorHandle(res, 400);
+        try {
+          const { title } = JSON.parse(body);
+          if (title && index != -1) {
+            todoList[index].title = title;
+            successHandle(res);
+            return;
           }
-        });
+          errorHandle(res, 400);
+        } catch (error) {
+          errorHandle(res, 400);
+        }
         break;
       default:
         errorHandle(res, 405);
