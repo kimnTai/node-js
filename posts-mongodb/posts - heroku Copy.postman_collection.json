@@ -1,0 +1,129 @@
+{
+	"info": {
+		"_postman_id": "3d30dab2-f247-4c9a-bc22-5ef1abd779ef",
+		"name": "posts - heroku Copy",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "取得所有代辦",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://gentle-bastion-26047.herokuapp.com/posts",
+					"protocol": "https",
+					"host": [
+						"gentle-bastion-26047",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"posts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "新增單筆代辦",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"content\": \"測試\",\r\n  \"type\": \"person\",\r\n  \"name\": \"name\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://gentle-bastion-26047.herokuapp.com/posts",
+					"protocol": "https",
+					"host": [
+						"gentle-bastion-26047",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"posts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "刪除所有代辦",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://gentle-bastion-26047.herokuapp.com/posts",
+					"protocol": "https",
+					"host": [
+						"gentle-bastion-26047",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"posts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "刪除單筆代辦",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://gentle-bastion-26047.herokuapp.com/posts/62526ac8c8ea6aca2663ccc1",
+					"protocol": "https",
+					"host": [
+						"gentle-bastion-26047",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"posts",
+						"62526ac8c8ea6aca2663ccc1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "編輯單筆代辦",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"修改123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://gentle-bastion-26047.herokuapp.com/posts/62526aeac8ea6aca2663ccc7",
+					"protocol": "https",
+					"host": [
+						"gentle-bastion-26047",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"posts",
+						"62526aeac8ea6aca2663ccc7"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
